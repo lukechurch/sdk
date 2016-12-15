@@ -434,8 +434,8 @@ dart_library.library('dart_sdk', null, /* Imports */[
   let CompleterOfString = () => (CompleterOfString = dart.constFn(async.Completer$(core.String)))();
   let CompleterOfMetadata = () => (CompleterOfMetadata = dart.constFn(async.Completer$(html$.Metadata)))();
   let CompleterOfListOfEntry = () => (CompleterOfListOfEntry = dart.constFn(async.Completer$(ListOfEntry())))();
-  let ListOfStyleSheet = () => (ListOfStyleSheet = dart.constFn(core.List$(html$.StyleSheet)))();
   let EventStreamProviderOfSecurityPolicyViolationEvent = () => (EventStreamProviderOfSecurityPolicyViolationEvent = dart.constFn(html$.EventStreamProvider$(html$.SecurityPolicyViolationEvent)))();
+  let ListOfStyleSheet = () => (ListOfStyleSheet = dart.constFn(core.List$(html$.StyleSheet)))();
   let ImmutableListMixin = () => (ImmutableListMixin = dart.constFn(html$.ImmutableListMixin$()))();
   let ElementAndElementToint = () => (ElementAndElementToint = dart.constFn(dart.functionType(core.int, [html$.Element, html$.Element])))();
   let ElementTobool = () => (ElementTobool = dart.constFn(dart.functionType(core.bool, [html$.Element])))();
