@@ -124,6 +124,7 @@ class CodeGenerator extends GeneralizingAstVisitor
   final ClassElement numClass;
   final ClassElement objectClass;
   final ClassElement stringClass;
+  final ClassElement functionClass;
   final ClassElement symbolClass;
 
   ConstFieldVisitor _constants;
@@ -169,6 +170,7 @@ class CodeGenerator extends GeneralizingAstVisitor
         nullClass = _getLibrary(c, 'dart:core').getType('Null'),
         objectClass = _getLibrary(c, 'dart:core').getType('Object'),
         stringClass = _getLibrary(c, 'dart:core').getType('String'),
+        functionClass = _getLibrary(c, 'dart:core').getType('Function'),
         symbolClass = _getLibrary(c, 'dart:_internal').getType('Symbol'),
         dartJSLibrary = _getLibrary(c, 'dart:js');
 
@@ -919,6 +921,25 @@ class CodeGenerator extends GeneralizingAstVisitor
           [className, _runtimeModule, className]));
       return;
     }
+    if (classElem == functionClass) {
+      body.add(js.statement(
+          '#.is = function is_Function(o) { return typeof o == "function"; }',
+          className));
+      body.add(js.statement(
+          '#.as = function as_Function(o) {'
+          '  if (typeof o == "function" || o == null) return o;'
+          '  return #.as(o, #);'
+          '}',
+          [className, _runtimeModule, className]));
+      body.add(js.statement(
+          '#._check = function check_String(o) {'
+          '  if (typeof o == "function" || o == null) return o;'
+          '  return #.check(o, #);'
+          '}',
+          [className, _runtimeModule, className]));
+      return;
+    }
+
     if (classElem == intClass) {
       body.add(js.statement(
           '#.is = function is_int(o) {'
