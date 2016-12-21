@@ -44417,10 +44417,10 @@ define([], function() {
       return html$.Blob._check(html$.Blob._create_2(blobParts, bag));
     }
     static _create_1(parts) {
-      return new window.Blob(parts);
+      return new self.Blob(parts);
     }
     static _create_2(parts, bag) {
-      return new window.Blob(parts, bag);
+      return new self.Blob(parts, bag);
     }
     static _create_bag() {
       return {};
