@@ -47,6 +47,7 @@ before_install:
   - cd ..
   - 'gclient config --spec=''solutions = [ { "name": "sdk", "url": "git@github.com:dart-lang/sdk.git", "deps_file": "DEPS", "managed": False } ]'''
   - gclient sync -n
+  - download_from_google_storage --no_auth --no_resume --bucket dart-dependencies --extract -s sdk/third_party/pkg/unittest.tar.gz.sha1
   - cd sdk
 
   # If a C++ compiler is set, build the SDK - else use the preinstalled SDK instead.
