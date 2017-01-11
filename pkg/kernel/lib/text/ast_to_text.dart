@@ -393,7 +393,11 @@ class Printer extends Visitor<Null> {
   }
 
   void writeNode(Node node) {
-    node.accept(this);
+    if (node == null) {
+      writeSymbol("<Null>");
+    } else {
+      node.accept(this);
+    }
   }
 
   void writeOptionalNode(Node node) {
