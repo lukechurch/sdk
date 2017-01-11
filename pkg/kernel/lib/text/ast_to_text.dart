@@ -1148,6 +1148,9 @@ class Printer extends Visitor<Null> {
 
   visitForInStatement(ForInStatement node) {
     writeIndentation();
+    if (node.isAsync) {
+      writeSpaced('await');
+    }
     writeSpaced('for');
     writeSymbol('(');
     writeVariableDeclaration(node.variable, useVarKeyword: true);
