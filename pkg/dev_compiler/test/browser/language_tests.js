@@ -775,17 +775,45 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       test(name, function(done) { // 'function' to allow `this.timeout`.
         console.debug('Running test:  ' + name);
 
+        // Many tests are async.  Currently, tests can indicate this in
+        // two different ways.  First, `main` can call (in Dart)
+        // `async_helper.asyncStart`.  We can check if this happened by
+        // querying `async_helper.asyncTestStarted` afterward and waiting for
+        // the callback if so.  Second, `main` can return a `Future`.  If so,
+        // we wait for that the complete.  If neither is true, we assume the
+        // test is synchronous.
+        //
+        // A 'failing' test will throw an exception.  This exception may be
+        // synchronous (i.e., during `main`) or asynchronous (after `main` in
+        // lieu of the callback/future).  The latter exceptions are not
+        // directly caught.  Instead, we intercept `window.onerror` to detect
+        // them.
+        //
+        // Note, if the test is marked 'negative' or 'fail', than pass and fail
+        // are effectively inverted: only a success is reported.
+        //
+        // In all cases, we funnel test completion through the `finish` handler
+        // below to handle reporting (based on status) and cleanup state.
+        //
+        // A test can finish in one of several ways:
+        // 1. Synchronous without an error.  In this case, `main` returns
+        //    null and did not set `async_helper`.  `finish` is invoked
+        //    immediately.
+        // 2. Synchronous error.  `main` throws an error.  `finish`
+        //    is invoked immediately with the error.
+        // 3. `Future` without an error.  In this case, the future completes
+        //    and asynchronously invokes `finish`.
+        // 4. Via `async_helper` without an error.  In this case, the
+        //    `async_helper` library triggers `finish` via its callback.
+        // 5. Asynchronously with an error.  In this case, `window.onerror`
+        //    triggers `finish` with the error.
+        // 6. Hangs.  In this case, we rely on the underlying mocha framework
+        //    timeout.
+
         let mainLibrary = require(module)[libraryName(name)];
         let negative = /negative_test/.test(name);
+        let fail = has('fail');
 
-        window.onerror = function(error, url, line) {
-          console.warn('Test: ' + name);
-          console.warn('Uncaught error: ' + error);
-          finish(error);
-          //mochaOnError(err, url, line);
-        };
-
-        var fail = has('fail');
         function finish(error) {
           // If the test left any lingering detritus in the DOM, blow it away
           // so it doesn't interfere with later tests.
@@ -814,6 +842,16 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
           window.onerror = mochaOnError;
           done(error);
         }
+
+        // Intercept uncaught exceptions
+        window.onerror = function(message, url, line, column, error) {
+          console.warn('Asynchronous error in ' + name + ': ' + message);
+          if (!error) {
+            error = new Error(message);
+          }
+          finish(error);
+        };
+
         async_helper.asyncTestInitialize(finish);
         if (has('slow')) this.timeout(10000);
  
