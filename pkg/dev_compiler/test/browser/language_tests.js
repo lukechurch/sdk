@@ -8,7 +8,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
 
   async_helper = async_helper.async_helper;
   let minitest = expect.minitest;
-
+  let mochaOnError = window.onerror;
   dart_sdk.dart.trapRuntimeErrors(false);
   dart_sdk._isolate_helper.startRootIsolate(function() {}, []);
   let html_config = unittest.html_config;
@@ -48,29 +48,29 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
   // TODO(jmesserly): separate StrongModeError from other errors.
   let all_status = {
     'language': {
-      'assert_with_type_test_or_cast_test': skip_fail,
-      'assertion_test': skip_fail,
+      'assertion_test': fail,
       'async_await_test_none_multi': 'unittest',
       'async_await_test_02_multi': 'unittest',
 
       // Flaky on travis (https://github.com/dart-lang/sdk/issues/27224)
-      'async_await_test_03_multi': skip_fail,
+      // TODO(vsm): Try again
+      'async_await_test_03_multi': async_unittest,
 
-      'async_star_await_pauses_test': skip_fail,
+      'async_star_await_pauses_test': async_unittest,
 
       // TODO(jmesserly): figure out why this test is hanging.
       'async_star_cancel_and_throw_in_finally_test': skip_timeout,
 
-      'async_star_cancel_while_paused_test': skip_fail,
-      'async_star_regression_fisk_test': skip_fail,
+      'async_star_cancel_while_paused_test': async_unittest,
+      'async_star_regression_fisk_test': async_unittest,
 
       // TODO(vsm): Re-enable (https://github.com/dart-lang/sdk/issues/28319)
-      'async_star_test_none_multi': ['unittest', 'skip', 'fail'],
-      'async_star_test_01_multi': ['unittest', 'skip', 'fail'],
-      'async_star_test_02_multi': ['unittest', 'skip', 'fail'],
-      'async_star_test_03_multi': ['unittest', 'skip', 'fail'],
-      'async_star_test_04_multi': ['unittest', 'skip', 'fail'],
-      'async_star_test_05_multi': ['unittest', 'skip', 'fail'],
+      'async_star_test_none_multi': async_unittest,
+      'async_star_test_01_multi': async_unittest,
+      'async_star_test_02_multi': async_unittest,
+      'async_star_test_03_multi': async_unittest,
+      'async_star_test_04_multi': async_unittest,
+      'async_star_test_05_multi': async_unittest,
 
       'async_switch_test': skip_fail,
       'asyncstar_throw_in_catch_test': skip_fail,
@@ -766,63 +766,74 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
 
       let protect = (f) => {  // Returns the exception, or `null`.
         try {
-          f();
-          return null;
+          return f();
         } catch (e) {
           return e;
         }
       };
 
       test(name, function(done) { // 'function' to allow `this.timeout`.
-        async_helper.asyncTestInitialize(done);
         console.debug('Running test:  ' + name);
 
-        var result = null;
         let mainLibrary = require(module)[libraryName(name)];
         let negative = /negative_test/.test(name);
-        if (has('slow')) this.timeout(10000);
-        if (has('fail')) {
-          let e = protect(mainLibrary.main);
-          if (negative) {
-            if (e != null) {
-              throw new Error(
-                  "negative test marked as 'fail' " +
-                  "but passed by throwing:\n" + e);
-            }
-          } else {
-            if (e == null) {
-              throw new Error("test marked as 'fail' but passed");
-            }
-          }
-        } else {
-          try {
+
+        window.onerror = function(error, url, line) {
+          console.warn('Test: ' + name);
+          console.warn('Uncaught error: ' + error);
+          finish(error);
+          //mochaOnError(err, url, line);
+        };
+
+        var fail = has('fail');
+        function finish(error) {
+          // If the test left any lingering detritus in the DOM, blow it away
+          // so it doesn't interfere with later tests.
+          if (fail) {
             if (negative) {
-              assert.throws(mainLibrary.main);
+              if (error) {
+                error = new Error(
+                  "negative test marked as 'fail' " +
+                  "but passed by throwing:\n" + error);
+              }
+            } else if (error) {
+              error = null
             } else {
-              result = mainLibrary.main();
+              error = new Error("test marked as 'fail' but passed");
             }
-          } finally {
-            minitest.finishTests();
+          } else if (negative) {
+            if (!error) {
+              error = new Error("test marked as 'negative' but did not throw");
+            } else {
+              error = null;
+            }
           }
+          minitest.finishTests();
+          document.body.innerHTML = '';
+          console.log("cleared");
+          window.onerror = mochaOnError;
+          done(error);
         }
-
-        // If the test left any lingering detritus in the DOM, blow it away
-        // so it doesn't interfere with later tests.
-        document.body.innerHTML = '';
-        console.log("cleared");
-
+        async_helper.asyncTestInitialize(finish);
+        if (has('slow')) this.timeout(10000);
+ 
+        var result;
+        try {
+          var result = mainLibrary.main();
+        } catch (e) {
+          finish(e);
+        }
         if (!async_helper.asyncTestStarted) {
           if (!result) {
-            done();
+            finish();
           } else {
-            result.then(dart_sdk.dart.dynamic)(() => done());
+            result.then(dart_sdk.dart.dynamic)(() => finish());
           }
         }
       });
     }
   }
 
-  let mochaOnError;
   // We run these tests in a mocha test wrapper to avoid the confusing failure
   // case of dart unittests being interleaved with mocha tests.
   // In practice we are really just suppressing all mocha test behavior while
@@ -847,7 +858,6 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
     this.timeout(100000000);
     this.enableTimeouts(false);
     // Suppress mocha on-error handling because it will mess up unittests.
-    mochaOnError = window.onerror;
     window.onerror = function(err, url, line) {
       console.error(err, url, line);
     };
