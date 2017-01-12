@@ -26,7 +26,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
   // Common combinations:
   const pass = 'pass';
   const fail = 'fail';
-  const skip_fail = ['skip', 'fail'];
+  const skip_fail = fail; //['skip', 'fail'];
   const skip_timeout = ['skip', 'timeout'];
 
   // Browsers
@@ -74,9 +74,8 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
 
       'async_switch_test': skip_fail,
       'asyncstar_throw_in_catch_test': skip_fail,
-      'await_future_test': skip_fail,
+      'await_future_test': skip_timeout,
       'bit_operations_test_none_multi': skip_fail,  // DDC/dart2js canonicalize bitop results to unsigned
-      'bool_test': skip_fail,
       'branch_canonicalization_test': skip_fail,  // JS bit operations truncate to 32 bits.
       'call_closurization_test': fail, // Functions do not expose a "call" method.
       'call_function_apply_test': fail, // Function.apply not really implemented.
@@ -84,7 +83,6 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'call_with_no_such_method_test': fail, // Function.apply not really implemented.
       'canonical_const2_test': skip_fail,
       'canonical_const_test': skip_fail,
-      'cascade_precedence_test': skip_fail,
       'cast_test_01_multi': skip_fail,
       'cast_test_02_multi': skip_fail,
       'cast_test_03_multi': skip_fail,
@@ -94,37 +92,24 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'cast_test_13_multi': skip_fail,
       'cast_test_14_multi': skip_fail,
       'cast_test_15_multi': skip_fail,
-      'cha_deopt1_test': skip_fail,
-      'cha_deopt2_test': skip_fail,
-      'cha_deopt3_test': skip_fail,
-      'class_syntax2_test': skip_fail,
       'classes_static_method_clash_test': skip_fail,
-      'closure_call_wrong_argument_count_negative_test': skip_fail,
-      'closure_in_constructor_test': skip_fail,
-      'closures_initializer_test': skip_fail,
       'code_after_try_is_executed_test_01_multi': skip_fail,
       'compile_time_constant10_test_none_multi': skip_fail,
       'compile_time_constant_a_test': skip_fail,
       'compile_time_constant_b_test': skip_fail,
       'compile_time_constant_d_test': skip_fail,
-      'compile_time_constant_i_test': skip_fail,
       'compile_time_constant_k_test_none_multi': skip_fail,
       'compile_time_constant_o_test_none_multi': skip_fail,
-      'const_constructor3_test_03_multi': skip_fail,
-      'const_escape_frog_test': skip_fail,
       'const_evaluation_test_01_multi': skip_fail,
       'const_switch_test_02_multi': skip_fail,
       'const_switch_test_04_multi': skip_fail,
-      'constructor11_test': skip_fail,
       'constructor12_test': skip_fail,
-      'custom_await_stack_trace_test': skip_fail,
       'cyclic_type2_test': skip_fail,
       'cyclic_type_test_00_multi': skip_fail,
       'cyclic_type_test_01_multi': skip_fail,
       'cyclic_type_test_02_multi': skip_fail,
       'cyclic_type_test_03_multi': skip_fail,
       'cyclic_type_test_04_multi': skip_fail,
-      'cyclic_type_variable_test_none_multi': skip_fail,
 
       // Deferred libraries are not actually deferred. These tests all test
       // that synchronous access to the library fails.
@@ -135,9 +120,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
 
       'deferred_regression_22995_test': skip_fail, // Strong mode "is" rejects some type tests.
       'double_int_to_string_test': skip_fail,
-      'double_to_string_test': skip_fail,
       'dynamic_test': skip_fail,
-      'enum_mirror_test': skip_fail,
       'exception_test': fail,
       'execute_finally6_test': skip_fail,
       'expect_test': skip_fail,
@@ -146,16 +129,12 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'external_test_13_multi': skip_fail,
       'external_test_20_multi': skip_fail,
       'f_bounded_quantification3_test': skip_fail,
-      'factory_type_parameter_test': skip_fail,
       'fast_method_extraction_test': skip_fail,
       'field_increment_bailout_test': fail,
       'field_optimization3_test': skip_fail,
       'final_syntax_test_08_multi': skip_fail,
       'first_class_types_test': skip_fail,
-      'flatten_test_01_multi': skip_fail,
-      'flatten_test_04_multi': skip_fail,
-      'for_in2_test': skip_fail,
-      'for_variable_capture_test': skip_fail,
+      'for_variable_capture_test': chrome_fail,
       'function_subtype0_test': skip_fail,
       'function_subtype1_test': skip_fail,
       'function_subtype2_test': skip_fail,
@@ -193,19 +172,12 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'function_subtype_optional2_test': skip_fail,
       'function_subtype_top_level0_test': skip_fail,
       'function_subtype_top_level1_test': skip_fail,
-      'function_subtype_typearg0_test': skip_fail,
       'function_subtype_typearg2_test': skip_fail,
       'function_subtype_typearg4_test': skip_fail,
       'function_type_alias2_test': skip_fail,
       'function_type_alias3_test': skip_fail,
       'function_type_alias4_test': skip_fail,
       'function_type_alias6_test_none_multi': skip_fail,
-      'gc_test': skip_fail,
-      'generic_field_mixin2_test': skip_fail,
-      'generic_field_mixin3_test': skip_fail,
-      'generic_field_mixin4_test': skip_fail,
-      'generic_field_mixin5_test': skip_fail,
-      'generic_field_mixin_test': skip_fail,
       'generic_instanceof_test': fail, // runtime strong mode reject
       'generic_instanceof2_test': skip_fail,
       'generic_is_check_test': skip_fail,
@@ -222,15 +194,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'instanceof_optimized_test': skip_fail,
       'integer_division_by_zero_test': fail,
       'is_nan_test': fail,
-      'issue10747_test': skip_fail,
-      'issue13179_test': skip_fail,
-      'issue21079_test': skip_fail,
-      'issue21957_test': skip_fail,
-      'issue23244_test': skip_fail,
-      'issue_1751477_test': skip_fail,
       'issue_22780_test_01_multi': skip_fail,
-      'issue_23914_test': skip_fail,
-      'js_properties_test': skip_fail,
       'lazy_static3_test': skip_fail,
       'least_upper_bound_expansive_test_none_multi': skip_fail,
       'left_shift_test': skip_fail,
@@ -239,13 +203,10 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'many_generic_instanceof_test': skip_fail,
       'map_literal10_test': skip_fail,
       'map_literal7_test': skip_fail,
-      'memory_swap_test': skip_fail,
       'method_invocation_test': skip_fail,
       'mint_arithmetic_test': skip_fail,
       'mixin_forwarding_constructor3_test': skip_fail,
-      'mixin_generic_test': skip_fail,
       'mixin_implements_test': skip_fail,
-      'mixin_invalid_inheritance1_test_none_multi': skip_fail,
       'mixin_issue10216_2_test': skip_fail,
       'mixin_mixin2_test': skip_fail,
       'mixin_mixin3_test': skip_fail,
@@ -257,9 +218,6 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'mixin_mixin_bound_test': skip_fail,
       'mixin_mixin_test': skip_fail,
       'mixin_regress_13688_test': skip_fail,
-      'mixin_type_parameter1_test': skip_fail,
-      'mixin_type_parameter2_test': skip_fail,
-      'mixin_type_parameter3_test': skip_fail,
       'modulo_test': fail,
       'named_parameter_clash_test': skip_fail,
       'named_parameters_passing_falsy_test': firefox_fail,
@@ -268,31 +226,22 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'number_identifier_test_05_multi': skip_fail,
       'number_identity2_test': skip_fail,
       'numbers_test': skip_fail,
-      'optimized_hoisting_checked_mode_assert_test': skip_fail,
       'redirecting_factory_reflection_test': skip_fail,
-      'regress_13462_0_test': skip_fail,
-      'regress_13462_1_test': skip_fail,
-      'regress_14105_test': skip_fail,
       'regress_16640_test': skip_fail,
       'regress_18535_test': fail,
-      'regress_21795_test': skip_fail,
-      'regress_22443_test': skip_fail,
       'regress_22666_test': skip_fail,
+      'regress_22777_test': fail,
       'setter_no_getter_test_01_multi': skip_fail,
       'stack_overflow_stacktrace_test': skip_fail,
       'stack_overflow_test': skip_fail,
       'stacktrace_rethrow_error_test_none_multi': skip_fail,
       'stacktrace_rethrow_error_test_withtraceparameter_multi': skip_fail,
-      'stacktrace_test': skip_fail,
+      'stacktrace_test': chrome_fail,
       'string_interpolate_null_test': skip_fail,
-      'super_operator_index3_test': skip_fail,
-      'super_operator_index4_test': skip_fail,
       'switch_label2_test': skip_fail,
       'switch_label_test': skip_fail,
       'switch_try_catch_test': skip_fail,
-      'sync_generator1_test_none_multi': skip_fail,
       'throwing_lazy_variable_test': skip_fail,
-      'top_level_non_prefixed_library_test': skip_fail,
       'truncdiv_test': fail,  // did not throw
       'type_variable_nested_test': skip_fail,  // unsound is-check
       'type_variable_typedef_test': skip_fail,  // unsound is-check
@@ -302,16 +251,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'bit_operations_test_03_multi': skip_fail,
       'bit_operations_test_04_multi': skip_fail,
       'bool_condition_check_test_01_multi': skip_fail,
-      'deferred_constraints_constants_test_none_multi': skip_fail,
-      'deferred_constraints_constants_test_reference_after_load_multi': skip_fail,
-      'deferred_constraints_type_annotation_test_new_generic1_multi': skip_fail,
-      'deferred_constraints_type_annotation_test_new_multi': skip_fail,
-      'deferred_constraints_type_annotation_test_none_multi': skip_fail,
-      'deferred_constraints_type_annotation_test_static_method_multi': skip_fail,
-      'deferred_constraints_type_annotation_test_type_annotation_non_deferred_multi': skip_fail,
       'deferred_load_constants_test_none_multi': skip_fail,
-      'deferred_load_library_wrong_args_test_01_multi': skip_fail,
-      'deferred_load_library_wrong_args_test_none_multi': skip_fail,
       'external_test_21_multi': skip_fail,
       'external_test_24_multi': skip_fail,
       'main_not_a_function_test_01_multi': skip_fail,
@@ -560,8 +500,6 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       // TODO(het): triage
       'double_pow_test': skip_fail,
       'low_test': skip_fail,
-      'math_test': skip_fail,
-      'math2_test': skip_fail,
       'pi_test': skip_timeout,
       'random_big_test': skip_fail,
     },
@@ -694,7 +632,6 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'relation_assignable_test': fail,
       'relation_subtype_test': fail,
       'set_field_with_final_test': fail,
-      'spawn_function_root_library_test': skip_fail,
       'symbol_validation_test_01_multi': fail,
       'symbol_validation_test_none_multi': fail,
       'to_string_test': fail,
@@ -721,6 +658,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
   }
 
   let unittest_tests = [];
+  let unittestAccidentallyInitialized = false;
 
   let languageTestPattern =
       new RegExp('gen/codegen_output/(.*)/([^/]*_test[^/]*)');
@@ -839,7 +777,7 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
           minitest.finishTests();
           document.body.innerHTML = '';
           console.log("cleared");
-          window.onerror = mochaOnError;
+          if (error && !(error instanceof Error)) error = new Error(error);
           done(error);
         }
 
@@ -858,10 +796,20 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
         var result;
         try {
           var result = mainLibrary.main();
+          if (result && !(result instanceof dart_sdk.async.Future)) {
+            result = null;
+          }
         } catch (e) {
           finish(e);
         }
-        if (!async_helper.asyncTestStarted) {
+
+        // Ensure this isn't a unittest
+        if (!unittestAccidentallyInitialized &&
+            unittest.src__test_environment.environment.initialized) {
+          // This suppresses duplicate messages for later tests
+          unittestAccidentallyInitialized = true;
+          finish(new Error('Test ' + name + ' must be marked as a unittest'));
+        } else if (!async_helper.asyncTestStarted) {
           if (!result) {
             finish();
           } else {
