@@ -52,16 +52,14 @@ define(['dart_sdk', 'async_helper', 'expect', 'unittest', 'is', 'require'],
       'async_await_test_02_multi': 'unittest',
 
       // Flaky on travis (https://github.com/dart-lang/sdk/issues/27224)
-      // TODO(vsm): Try again
       'async_await_test_03_multi': async_unittest,
 
-      'async_star_await_pauses_test': async_unittest,
+      'async_star_await_pauses_test': skip_timeout,
 
       // TODO(jmesserly): figure out why this test is hanging.
       'async_star_cancel_and_throw_in_finally_test': skip_timeout,
 
-      'async_star_cancel_while_paused_test': async_unittest,
-      'async_star_regression_fisk_test': async_unittest,
+      'async_star_cancel_while_paused_test': fail,
 
       // TODO(vsm): Re-enable (https://github.com/dart-lang/sdk/issues/28319)
       'async_star_test_none_multi': async_unittest,
